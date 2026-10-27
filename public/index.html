@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>JagoKuis</title>
+    <meta
+      name="description"
+      content="JagoKuis - kuis multiplayer real-time seputar Sistem Terdistribusi"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <canvas id="confetti" aria-hidden="true"></canvas>
+    <div class="bg" aria-hidden="true">
+      <span class="orb o1"></span><span class="orb o2"></span
+      ><span class="orb o3"></span>
+    </div>
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">J</div>
+        <div>
+          <h1>Jago<span>Kuis</span></h1>
+          <p>Adu pintar Sistem Terdistribusi</p>
+        </div>
+      </div>
+      <div class="top-right">
+        <button
+          class="icon-btn"
+          id="mute-btn"
+          type="button"
+          title="Suara"
+          aria-label="Aktif/nonaktifkan suara"
+        >
+          🔊
+        </button>
+        <div class="conn" id="conn">
+          <span class="dot"></span><span id="conn-text">Menghubungkan...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ====== LAYAR JOIN ====== -->
+    <main id="screen-join" class="center">
+      <span class="deco d1">🧠</span><span class="deco d2">💻</span
+      ><span class="deco d3">📡</span> <span class="deco d4">⚡</span
+      ><span class="deco d5">🛰️</span><span class="deco d6">🔌</span>
+
+      <form id="join-form" class="card join-card" autocomplete="off">
+        <div class="join-title">
+          <h2>Siap jadi <em>Jago</em>?</h2>
+          <p class="muted">
+            Pilih karakter, tulis namamu, lalu masuk ke arena.
+          </p>
+        </div>
+
+        <div class="preview">
+          <div class="avatar xl" id="preview-avatar"><span>🦊</span></div>
+          <div class="preview-name" id="preview-name">Namamu</div>
+        </div>
+
+        <input
+          id="name-input"
+          type="text"
+          maxlength="15"
+          placeholder="Ketik namamu di sini"
+          required
+          autofocus
+        />
+
+        <div class="picker-label">Pilih karakter</div>
+        <div class="avatar-grid" id="avatar-grid"></div>
+
+        <button class="btn primary big" id="join-btn" type="submit">
+          Gabung &amp; Main 🚀
+        </button>
+        <p class="error" id="join-error"></p>
+      </form>
+    </main>
+
+    <!-- ====== LAYAR GAME ====== -->
+    <main id="screen-game" class="layout" hidden>
+      <section class="stage">
+        <!-- Lobby -->
+        <div id="view-lobby" class="card view">
+          <div class="eyebrow">Ruang Tunggu</div>
+          <h2 id="lobby-title">Menunggu pemain...</h2>
+          <p class="muted" id="lobby-text"></p>
+
+          <div class="tiles" id="lobby-tiles"></div>
+
+          <div class="share">
+            <span>Ajak teman buka:</span>
+            <code id="share-url"></code>
+          </div>
+
+          <button class="btn primary big" id="start-btn" hidden>
+            🚀 Mulai Permainan
+          </button>
+          <p class="muted small" id="wait-host" hidden>
+            Menunggu host memulai permainan...
+          </p>
+
+          <div class="rules">
+            <div><b>8</b><span>soal acak</span></div>
+            <div><b>15 dtk</b><span>per soal</span></div>
+            <div><b>🔥</b><span>combo beruntun = bonus</span></div>
+          </div>
+        </div>
+
+        <!-- Bersiap -->
+        <div id="view-getready" class="card view" hidden>
+          <div class="big-emoji pulse">⏳</div>
+          <h2>Bersiap...</h2>
+          <p class="muted">Soal pertama segera muncul!</p>
+        </div>
+
+        <!-- Soal -->
+        <div id="view-question" class="view" hidden>
+          <div class="card q-card">
+            <div class="q-top">
+              <span class="badge" id="q-number">Soal 1/8</span>
+              <div class="progress" id="q-progress"></div>
+              <div class="ring">
+                <svg viewBox="0 0 44 44">
+                  <circle class="ring-bg" cx="22" cy="22" r="19" />
+                  <circle class="ring-fg" id="ring-fg" cx="22" cy="22" r="19" />
+                </svg>
+                <span id="timer-text">15</span>
+              </div>
+            </div>
+            <h2 id="q-text"></h2>
+            <div class="options" id="options"></div>
+            <p class="muted small status" id="q-status"></p>
+          </div>
+
+          <div class="card result-box" id="result-box" hidden>
+            <div class="result-top">
+              <div>
+                <div id="result-verdict" class="verdict"></div>
+                <div id="result-combo" class="combo-line"></div>
+              </div>
+              <div id="result-points" class="points"></div>
+            </div>
+            <p class="correct" id="result-correct"></p>
+            <p class="muted" id="result-explain"></p>
+            <h3>Papan Skor</h3>
+            <div id="result-board" class="board"></div>
+            <p class="muted small" id="result-next"></p>
+          </div>
+        </div>
+
+        <!-- Hasil akhir -->
+        <div id="view-final" class="card view" hidden>
+          <div class="eyebrow">Permainan Selesai</div>
+          <h2>🏆 Para Jago!</h2>
+          <p class="muted" id="final-me"></p>
+          <div class="podium" id="podium"></div>
+          <div id="final-board" class="board"></div>
+          <button class="btn primary big" id="again-btn" hidden>
+            🔁 Main Lagi
+          </button>
+          <p class="muted small" id="again-wait" hidden>
+            Menunggu host memulai permainan baru...
+          </p>
+        </div>
+      </section>
+
+      <aside class="side">
+        <div class="card me-card" id="me-card"></div>
+
+        <div class="card">
+          <h3>👥 Pemain <span class="count" id="player-count">0</span></h3>
+          <ul class="players" id="player-list"></ul>
+        </div>
+
+        <div class="card chat">
+          <h3>💬 Obrolan</h3>
+          <div class="chat-log" id="chat-log"></div>
+          <form id="chat-form" class="chat-form" autocomplete="off">
+            <input
+              id="chat-input"
+              type="text"
+              maxlength="200"
+              placeholder="Tulis pesan..."
+            />
+            <button class="btn small" type="submit">Kirim</button>
+          </form>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="footer">
+      JagoKuis &middot; Sistem Terdistribusi &middot; Kelompok 4
+    </footer>
+
+    <!-- Overlay koneksi terputus -->
+    <div class="overlay" id="overlay" hidden>
+      <div class="card">
+        <div class="big-emoji">🔌</div>
+        <h2>Koneksi terputus</h2>
+        <p class="muted">
+          Server tidak dapat dijangkau. Pastikan server masih berjalan.
+        </p>
+        <button class="btn primary" onclick="location.reload()">
+          Hubungkan Ulang
+        </button>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

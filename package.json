@@ -1,0 +1,13 @@
+{
+  "name": "jagokuis",
+  "version": "1.0.0",
+  "description": "JagoKuis - kuis multiplayer real-time Client-Server dengan Node.js + WebSocket (Tugas Sistem Terdistribusi)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "license": "ISC"
+}
